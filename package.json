@@ -1,0 +1,30 @@
+{
+  "name": "ecoflow-supabase",
+  "version": "0.0.1",
+  "description": "Supabase apis for EcoFlowJS",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "tsc --build",
+    "watch": "tsc --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EcoFlowJS/ecoflow-supabase.git"
+  },
+  "keywords": [
+    "EcoFlow",
+    "EcoFlowModule"
+  ],
+  "ecoModule": {},
+  "author": "EcoFlowJS",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/EcoFlowJS/ecoflow-supabase/issues"
+  },
+  "homepage": "https://github.com/EcoFlowJS/ecoflow-supabase#readme",
+  "dependencies": {
+    "@ecoflow/types": "^0.0.27",
+    "@supabase/ssr": "^0.4.0",
+    "typescript": "^5.5.4"
+  }
+}
