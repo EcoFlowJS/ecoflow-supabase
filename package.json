@@ -15,7 +15,9 @@
     "EcoFlow",
     "EcoFlowModule"
   ],
-  "ecoModule": {},
+  "ecoModule": {
+    "OauthController": "./dist/controllers/OauthController.js"
+  },
   "author": "EcoFlowJS",
   "license": "MIT",
   "bugs": {
@@ -24,7 +26,10 @@
   "homepage": "https://github.com/EcoFlowJS/ecoflow-supabase#readme",
   "dependencies": {
     "@ecoflow/types": "^0.0.27",
-    "@supabase/ssr": "^0.4.0",
+    "@supabase/supabase-js": "^2.45.1"
+  },
+  "devDependencies": {
+    "@types/koa": "^2.15.0",
     "typescript": "^5.5.4"
   }
 }
