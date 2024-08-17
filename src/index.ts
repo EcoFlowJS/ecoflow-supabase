@@ -74,7 +74,7 @@ export default function functionManifest(): ModuleManifest {
         /**
          * Represents the name of the authentication method as "Oauth".
          */
-        name: "Oauth",
+        name: "Oauth SignIn",
 
         /**
          * Represents the type of a component as "Middleware".
@@ -208,6 +208,135 @@ export default function functionManifest(): ModuleManifest {
          * The controller responsible for handling OAuth operations.
          */
         controller: "OauthController",
+      },
+
+      /**
+       * Represents a middleware named "Oauth isAuthenticated" that checks if the user is authenticated using Supabase OAuth.
+       * @type {Object}
+       * @property {string} name - The name of the middleware.
+       * @property {string} type - The type of the middleware.
+       * @property {string} describtion - The description of the middleware.
+       * @property {Array<Object>} inputs - An array of input objects for the middleware.
+       * @property {string} inputs.name - The name of the input.
+       * @property {string} inputs.type - The type of the input.
+       * @property {string} inputs.label - The label of the input.
+       * @property {boolean} inputs.required - Indicates if the input
+       */
+      {
+        /**
+         * Represents the name of the authentication method as "Oauth isAuthenticated".
+         */
+        name: "Oauth isAuthenticated",
+
+        /**
+         * Represents the type of a component as "Middleware".
+         */
+        type: "Middleware",
+
+        /**
+         * Checks if the user is authenticated using Supabase OAuth.
+         * @returns None
+         */
+        describtion: "Checks if the user is authenticated using Supabase OAuth",
+
+        /**
+         * Defines the input fields for a project configuration form.
+         * @returns An array of objects, each representing an input field with properties like name, type, label, required, hint, and pickerOptions.
+         */
+        inputs: [
+          /**
+           * Represents a field in a form with the following properties:
+           * @param {string} name - The name of the field.
+           * @param {string} type - The data type of the field.
+           * @param {string} label - The label or display name of the field.
+           * @param {boolean} required - Indicates if the field is required or not.
+           */
+          {
+            name: "projectURL",
+            type: "String",
+            label: "Project URL",
+            required: true,
+          },
+
+          /**
+           * Represents a configuration object for an API key field.
+           * @type {Object}
+           * @property {string} name - The name of the API key field.
+           * @property {string} type - The data type of the API key field.
+           * @property {string} label - The label for the API key field.
+           * @property {boolean} required - Indicates if the API key field is required.
+           * @property {string} hint - Additional information or instructions for the API key field.
+           */
+          {
+            name: "apiKey",
+            type: "String",
+            label: "API Key",
+            required: false,
+            hint: 'For environment variables provide EcoFlow prefix. example:"ECOFLOW_USER_". Default:ECOFLOW_USER_SUPABASE_API_KEY',
+          },
+
+          /**
+           * Represents a configuration object for a checkbox input field.
+           * @type {Object}
+           * @property {string} name - The name of the input field.
+           * @property {string} type - The type of input field, in this case, "Checkbox".
+           * @property {string} label - The label text displayed next to the checkbox.
+           * @property {boolean} required - Indicates if the checkbox is required to be checked.
+           * @property {string} hint - Additional information or instructions for the checkbox field.
+           */
+          {
+            name: "apiKeyFromEnv",
+            type: "Checkbox",
+            label: "Api key from environment variable.",
+            required: false,
+            hint: 'For environment variables provide EcoFlow prefix in Api Key. example:"ECOFLOW_USER_"',
+          },
+
+          /**
+           * Represents a provider select picker field with a list of available provider options.
+           * @type {Object}
+           * @property {string} name - The name of the field.
+           * @property {string} type - The type of field (SelectPicker in this case).
+           * @property {string} label - The label displayed for the field.
+           * @property {boolean} required - Indicates if the field is required.
+           * @property {string[]} pickerOptions - An array of provider options to choose from.
+           */
+          {
+            name: "provider",
+            type: "SelectPicker",
+            label: "Provider",
+            required: true,
+            pickerOptions: [
+              "apple",
+              "azure",
+              "bitbucket",
+              "discord",
+              "facebook",
+              "figma",
+              "github",
+              "gitlab",
+              "google",
+              "kakao",
+              "keycloak",
+              "linkedin",
+              "linkedin_oidc",
+              "notion",
+              "slack",
+              "slack_oidc",
+              "spotify",
+              "twitch",
+              "twitter",
+              "workos",
+              "zoom",
+              "fly",
+            ],
+          },
+        ],
+
+        /**
+         * Represents a controller named "OauthIsAuthenticated".
+         */
+        controller: "OauthIsAuthenticated",
       },
     ],
   };
