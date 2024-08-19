@@ -17,7 +17,8 @@
   ],
   "ecoModule": {
     "OauthController": "./dist/controllers/OauthController.js",
-    "OauthIsAuthenticated": "./dist/controllers/OauthIsAuthenticated.js"
+    "OauthIsAuthenticated": "./dist/controllers/OauthIsAuthenticated.js",
+    "refreshSession": "./dist/controllers/refreshSession.js"
   },
   "author": "EcoFlowJS",
   "license": "MIT",

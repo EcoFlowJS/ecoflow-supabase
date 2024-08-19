@@ -291,52 +291,134 @@ export default function functionManifest(): ModuleManifest {
             required: false,
             hint: 'For environment variables provide EcoFlow prefix in Api Key. example:"ECOFLOW_USER_"',
           },
-
-          /**
-           * Represents a provider select picker field with a list of available provider options.
-           * @type {Object}
-           * @property {string} name - The name of the field.
-           * @property {string} type - The type of field (SelectPicker in this case).
-           * @property {string} label - The label displayed for the field.
-           * @property {boolean} required - Indicates if the field is required.
-           * @property {string[]} pickerOptions - An array of provider options to choose from.
-           */
-          {
-            name: "provider",
-            type: "SelectPicker",
-            label: "Provider",
-            required: true,
-            pickerOptions: [
-              "apple",
-              "azure",
-              "bitbucket",
-              "discord",
-              "facebook",
-              "figma",
-              "github",
-              "gitlab",
-              "google",
-              "kakao",
-              "keycloak",
-              "linkedin",
-              "linkedin_oidc",
-              "notion",
-              "slack",
-              "slack_oidc",
-              "spotify",
-              "twitch",
-              "twitter",
-              "workos",
-              "zoom",
-              "fly",
-            ],
-          },
         ],
 
         /**
          * Represents a controller named "OauthIsAuthenticated".
          */
         controller: "OauthIsAuthenticated",
+      },
+
+      /**
+       * Represents a middleware function that refreshes the session with Supabase.
+       * @type {Object}
+       * @property {string} name - The name of the middleware ("Refresh Session").
+       * @property {string} type - The type of middleware ("Middleware").
+       * @property {string} describtion - A description of what the middleware does ("Refreshes the session with Supabase").
+       * @property {Array<Object>} inputs - An array of input objects with properties like name, type, label, required, and hint.
+       * @property {string} controller - The controller function associated with this middleware ("refreshSession").
+       */
+      {
+        /**
+         * Represents a command to refresh the current session.
+         * @type {string}
+         */
+        name: "Refresh Session",
+
+        /**
+         * Represents a type of "Middleware".
+         */
+        type: "Middleware",
+
+        /**
+         * Refreshes the session with Supabase.
+         */
+        describtion: "Refreshes the session with Supabase",
+
+        /**
+         * Defines an array of input objects with specific properties for a configuration setup.
+         * @returns {Array} An array of input objects with properties like name, type, label, required, and hint.
+         */
+        inputs: [
+          /**
+           * Represents a field in a form with the name, type, label, and required status.
+           * @type {Object}
+           * @property {string} name - The name of the field.
+           * @property {string} type - The type of the field.
+           * @property {string} label - The label of the field.
+           * @property {boolean} required - Indicates if the field is required.
+           */
+          {
+            name: "projectURL",
+            type: "String",
+            label: "Project URL",
+            required: true,
+          },
+
+          /**
+           * Represents a configuration object for an API key field.
+           * @type {Object}
+           * @property {string} name - The name of the API key field.
+           * @property {string} type - The data type of the API key field.
+           * @property {string} label - The label to display for the API key field.
+           * @property {boolean} required - Indicates if the API key field is required.
+           * @property {string} hint - Additional information or hint for the API key field.
+           */
+          {
+            name: "apiKey",
+            type: "String",
+            label: "API Key",
+            required: false,
+            hint: 'For environment variables provide EcoFlow prefix. example:"ECOFLOW_USER_". Default:ECOFLOW_USER_SUPABASE_API_KEY',
+          },
+
+          /**
+           * Represents a configuration object for an "apiKeyFromEnv" field in a form.
+           * @type {Object}
+           * @property {string} name - The name of the field ("apiKeyFromEnv").
+           * @property {string} type - The type of the field ("Checkbox").
+           * @property {string} label - The label text for the field ("Api key from environment variable.").
+           * @property {boolean} required - Indicates if the field is required (false).
+           * @property {string} hint - Additional information or hint for the field.
+           */
+          {
+            name: "apiKeyFromEnv",
+            type: "Checkbox",
+            label: "Api key from environment variable.",
+            required: false,
+            hint: 'For environment variables provide EcoFlow prefix in Api Key. example:"ECOFLOW_USER_"',
+          },
+
+          /**
+           * Represents a configuration object for a "refreshToken" field in a form.
+           * @type {Object}
+           * @property {string} name - The name of the field ("refreshToken").
+           * @property {string} label - The label displayed for the field ("Refresh token").
+           * @property {string} type - The data type of the field ("String").
+           * @property {boolean} required - Indicates if the field is required (true).
+           * @property {string} hint - Additional information or instructions for the field.
+           */
+          {
+            name: "refreshToken",
+            label: "Refresh token",
+            type: "String",
+            required: true,
+            hint: "If passed by payload is checked, kindly provide a refresh token payload key.",
+          },
+
+          /**
+           * Represents a configuration object for a "Pass by payload" option in a form.
+           * @type {Object}
+           * @property {string} name - The name of the option ("passByPayload").
+           * @property {string} label - The label displayed for the option ("Pass by payload").
+           * @property {string} type - The type of the input field ("Checkbox").
+           * @property {boolean} required - Indicates if the option is required (false).
+           * @property {string} hint - Additional information or hint for the option.
+           */
+          {
+            name: "passByPayload",
+            label: "Pass by payload",
+            type: "Checkbox",
+            required: false,
+            hint: "If checked, kindly provide a refresh token payload key.",
+          },
+        ],
+
+        /**
+         * Represents a controller action to refresh the session.
+         * @type {string}
+         */
+        controller: "refreshSession",
       },
     ],
   };

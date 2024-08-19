@@ -35,14 +35,13 @@ export default async function OauthIsAuthenticated(ctx: EcoContext) {
    * @param {object} inputs - The object containing projectURL, apiKey, apiKeyFromEnv, and provider.
    * @returns None
    */
-  const { projectURL, apiKey, apiKeyFromEnv, provider } = inputs;
+  const { projectURL, apiKey, apiKeyFromEnv } = inputs;
 
   /**
    * Checks if the project URL is missing or empty, and sets an error message in the payload object if so.
    * @param {string} projectURL - The project URL to check.
    * @param {string} apiKey - The API key to check.
    * @param {string} apiKeyFromEnv - The API key from environment to check.
-   * @param {string} provider - The provider to check.
    * @param {object} payload - The payload object to update with error message if project URL is missing.
    * @returns None
    */
@@ -54,7 +53,6 @@ export default async function OauthIsAuthenticated(ctx: EcoContext) {
         projectURL: _.isUndefined(projectURL),
         apiKey: _.isUndefined(apiKey),
         apiKeyFromEnv: _.isUndefined(apiKeyFromEnv),
-        provider: _.isUndefined(provider),
       },
     };
     return;
@@ -79,7 +77,6 @@ export default async function OauthIsAuthenticated(ctx: EcoContext) {
    * @param {string} projectURL - The project URL.
    * @param {string} apiKey - The API key.
    * @param {string} apiKeyFromEnv - The API key from environment variables.
-   * @param {string} provider - The provider.
    * @returns None
    */
   if (_.isUndefined(supabaseApiKey)) {
@@ -91,27 +88,6 @@ export default async function OauthIsAuthenticated(ctx: EcoContext) {
         apiKey: _.isUndefined(apiKey),
         supabaseApiKey: _.isUndefined(supabaseApiKey),
         apiKeyFromEnv: _.isUndefined(apiKeyFromEnv),
-        provider: _.isUndefined(provider),
-      },
-    };
-    return;
-  }
-
-  /**
-   * Checks if the provider is missing or empty, and sets an error message in the payload object if so.
-   * @param {any} provider - The provider object to check.
-   * @returns None
-   */
-  if (!provider || _.isEmpty(provider)) {
-    payload.msg = {
-      error: true,
-      message: "Missing provider.",
-      status: {
-        projectURL: _.isUndefined(projectURL),
-        apiKey: _.isUndefined(apiKey),
-        supabaseApiKey: _.isUndefined(supabaseApiKey),
-        apiKeyFromEnv: _.isUndefined(apiKeyFromEnv),
-        provider: _.isUndefined(provider),
       },
     };
     return;
