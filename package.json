@@ -18,7 +18,8 @@
   "ecoModule": {
     "OauthController": "./dist/controllers/OauthController.js",
     "OauthIsAuthenticated": "./dist/controllers/OauthIsAuthenticated.js",
-    "refreshSession": "./dist/controllers/refreshSession.js"
+    "refreshSession": "./dist/controllers/refreshSession.js",
+    "ConfigurationController": "./dist/controllers/ConfigurationController.js"
   },
   "author": "EcoFlowJS",
   "license": "MIT",
@@ -27,7 +28,7 @@
   },
   "homepage": "https://github.com/EcoFlowJS/ecoflow-supabase#readme",
   "dependencies": {
-    "@ecoflow/types": "^0.0.27",
+    "@ecoflow/types": "file:../eco-flow/packages/types",
     "@supabase/supabase-js": "^2.45.1"
   },
   "devDependencies": {
