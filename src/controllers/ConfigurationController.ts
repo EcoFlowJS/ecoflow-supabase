@@ -1,20 +1,22 @@
+import { SupabaseClient } from "@supabase/supabase-js";
 import supabaseClient from "../helpers/supabaseClient";
 
-function ConfigurationController(ctx: any) {
+function ConfigurationController(
+  inputs: any
+): SupabaseClient<any, "public", any> | null {
   const { _, log } = ecoFlow;
 
-  if (_.isEmpty(ctx)) return;
-
-  const { id, global, inputs } = ctx;
-
-  if (_.isEmpty(inputs)) return log.error("Missing inputs.");
+  if (_.isEmpty(inputs)) {
+    log.error("Missing inputs.");
+    return null;
+  }
 
   const { projectURL, apiKey, apiKeyFromEnv } = inputs;
 
-  if (_.isEmpty(id)) return;
-
-  if (!projectURL || _.isEmpty(projectURL))
-    return log.error("Missing project URL.");
+  if (!projectURL || _.isEmpty(projectURL)) {
+    log.error("Missing project URL.");
+    return null;
+  }
 
   const supabaseApiKey: string = _.isUndefined(apiKey)
     ? process.env.ECOFLOW_USER_SUPABASE_API_KEY
@@ -22,10 +24,12 @@ function ConfigurationController(ctx: any) {
     ? process.env[apiKey]
     : apiKey;
 
-  if (!supabaseApiKey || _.isEmpty(supabaseApiKey))
-    return log.error("Missing API key.");
+  if (!supabaseApiKey || _.isEmpty(supabaseApiKey)) {
+    log.error("Missing API key.");
+    return null;
+  }
 
-  global[id] = supabaseClient(projectURL, supabaseApiKey);
+  return supabaseClient(projectURL, supabaseApiKey);
 }
 
 export default ConfigurationController;
