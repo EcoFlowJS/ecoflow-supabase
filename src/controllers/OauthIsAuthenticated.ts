@@ -1,23 +1,27 @@
 import { EcoContext } from "@ecoflow/types";
-import supabaseClient from "../helpers/supabaseClient";
+import { SupabaseClient } from "@supabase/supabase-js";
 
+/**
+ * Checks if the user is authenticated using OAuth.
+ * @param {EcoContext} ctx - The context object containing information about the request.
+ * @returns None
+ */
 export default async function OauthIsAuthenticated(ctx: EcoContext) {
   /**
-   * Destructures the "_" property from the ecoFlow object.
-   * @param {Object} ecoFlow - The ecoFlow object containing the "_" property.
-   * @returns None
+   * Destructures the ecoFlow object to extract the _ and moduleConfigs properties.
+   * @returns An object containing the _ and moduleConfigs properties from the ecoFlow object.
    */
-  const { _ } = ecoFlow;
+  const { _, moduleConfigs } = ecoFlow;
 
   /**
-   * Destructures the ctx object into payload, inputs, and next variables.
-   * @param {object} ctx - The context object to destructure.
+   * Destructures the context object into its individual properties for easier access.
+   * @param {object} ctx - The context object containing payload, inputs, request, and next properties.
    * @returns None
    */
   const { payload, inputs, request, next } = ctx;
 
   /**
-   * Checks if the inputs object is empty or undefined. If so, sets an error message in the payload object.
+   * Checks if the inputs object is empty or undefined, and sets an error message in the payload if so.
    * @param {object} inputs - The inputs object to check.
    * @param {object} payload - The payload object to update with an error message if inputs are missing.
    * @returns None
@@ -31,83 +35,58 @@ export default async function OauthIsAuthenticated(ctx: EcoContext) {
   }
 
   /**
-   * Destructures the inputs object to extract projectURL, apiKey, apiKeyFromEnv, and provider.
-   * @param {object} inputs - The object containing projectURL, apiKey, apiKeyFromEnv, and provider.
+   * Checks if the client object is missing or empty, and sets an error message in the payload if so.
+   * @param {object} inputs - An object containing client information.
    * @returns None
    */
-  const { projectURL, apiKey, apiKeyFromEnv } = inputs;
-
-  /**
-   * Checks if the project URL is missing or empty, and sets an error message in the payload object if so.
-   * @param {string} projectURL - The project URL to check.
-   * @param {string} apiKey - The API key to check.
-   * @param {string} apiKeyFromEnv - The API key from environment to check.
-   * @param {object} payload - The payload object to update with error message if project URL is missing.
-   * @returns None
-   */
-  if (!projectURL || _.isEmpty(projectURL)) {
+  const { client } = inputs;
+  if (!client || _.isEmpty(client)) {
     payload.msg = {
       error: true,
-      message: "Missing project URL.",
+      message: "Missing client.",
       status: {
-        projectURL: _.isUndefined(projectURL),
-        apiKey: _.isUndefined(apiKey),
-        apiKeyFromEnv: _.isUndefined(apiKeyFromEnv),
+        client: _.isUndefined(client),
       },
     };
     return;
   }
 
   /**
-   * Retrieves the Supabase API key based on the provided apiKey or environment variables.
-   * @param {string} apiKey - The API key to use, if provided.
-   * @param {string} apiKeyFromEnv - The environment variable name for the API key.
-   * @returns {string} The Supabase API key to be used.
-   */
-  const supabaseApiKey: string = _.isUndefined(apiKey)
-    ? process.env.ECOFLOW_USER_SUPABASE_API_KEY
-    : apiKeyFromEnv
-    ? process.env[apiKey]
-    : apiKey;
-
-  /**
-   * Checks if the Supabase API key is undefined and sets an error message in the payload object if it is.
-   * @param {string} supabaseApiKey - The Supabase API key to check.
-   * @param {object} payload - The payload object to update with error message if API key is missing.
-   * @param {string} projectURL - The project URL.
-   * @param {string} apiKey - The API key.
-   * @param {string} apiKeyFromEnv - The API key from environment variables.
+   * Selects the configuration manager for the "ecoflow-supabase" package and checks if it exists.
+   * If the configuration manager does not exist, it sets an error message in the payload object.
    * @returns None
    */
-  if (_.isUndefined(supabaseApiKey)) {
+  const configManager = moduleConfigs.selectPackage("ecoflow-supabase");
+  if (!configManager || _.isUndefined(configManager)) {
     payload.msg = {
       error: true,
-      message: "Missing API Key.",
-      status: {
-        projectURL: _.isUndefined(projectURL),
-        apiKey: _.isUndefined(apiKey),
-        supabaseApiKey: _.isUndefined(supabaseApiKey),
-        apiKeyFromEnv: _.isUndefined(apiKeyFromEnv),
-      },
+      message: "Missing configs manager for ecoflow-supabase package",
     };
     return;
   }
 
   /**
-   * Creates a Supabase client instance with the provided project URL and API key.
-   * @param {string} projectURL - The URL of the Supabase project.
-   * @param {string} supabaseApiKey - The API key for the Supabase project.
-   * @returns A Supabase client instance.
-   */
-  const clientSupabase = supabaseClient(projectURL, supabaseApiKey);
-
-  /**
-   * Checks if the Supabase client is undefined or empty, and sets an error message in the payload if so.
-   * @param {any} clientSupabase - The Supabase client object to check.
-   * @param {object} payload - The payload object to update with an error message if needed.
+   * Retrieves the configuration for the client using the configManager.
+   * If the configuration is null or empty, it sets an error message in the payload.
+   * @param {Client} client - The client for which the configuration is retrieved.
    * @returns None
    */
-  if (_.isUndefined(clientSupabase) || _.isEmpty(clientSupabase)) {
+  const config = configManager.get(client);
+  if (_.isNull(config) || _.isEmpty(config)) {
+    payload.msg = {
+      error: true,
+      message: "Missing config for ecoflow-supabase package",
+    };
+    return;
+  }
+
+  /**
+   * Checks if the Supabase client is provided in the configuration and handles the case where it is missing.
+   * @param {object} config - The configuration object containing the Supabase client.
+   * @returns None
+   */
+  const supabase = config.configs as SupabaseClient<any, "public", any>;
+  if (_.isNull(supabase) || _.isEmpty(supabase)) {
     payload.msg = {
       error: true,
       message: "Missing supabase client",
@@ -116,18 +95,13 @@ export default async function OauthIsAuthenticated(ctx: EcoContext) {
   }
 
   /**
-   * Extracts the token from the Authorization header in the request.
-   * @param {Request} request - The request object containing headers.
-   * @returns The extracted token or undefined if not found.
-   */
-  const token = request.headers.authorization?.split(" ")[1];
-
-  /**
-   * Checks if the token is undefined or empty. If so, sets the status to 401,
-   * updates the payload message, and returns.
-   * @param {any} token - The token to check for validity.
+   * Extracts the token from the authorization header in the request and checks if it is valid.
+   * If the token is missing or empty, it sets the response status to 401 and returns an error message.
+   * @param {Request} request - The request object containing the headers.
+   * @param {Context} ctx - The context object to set the response status and payload.
    * @returns None
    */
+  const token = request.headers.authorization?.split(" ")[1];
   if (_.isUndefined(token) || _.isEmpty(token)) {
     ctx.status = 401;
     payload.msg = {
@@ -138,16 +112,16 @@ export default async function OauthIsAuthenticated(ctx: EcoContext) {
   }
 
   /**
-   * Retrieves user data and potential errors from Supabase using the provided token.
-   * @param {string} token - The authentication token for the user.
+   * Retrieves user data and error information from Supabase authentication using the provided token.
+   * @param {string} token - The authentication token used to retrieve user data.
    * @returns An object containing the user data and any potential errors.
    */
-  const { data, error } = await clientSupabase.auth.getUser(token);
+  const { data, error } = await supabase.auth.getUser(token);
 
   /**
-   * Handles the error by setting the status to 401, constructing an error message object,
-   * and returning early from the function.
-   * @param {Error} error - The error object that occurred.
+   * If an error is present, set the status to 401, construct an error message object,
+   * and return without further execution.
+   * @param {Error} error - The error object to handle
    * @returns None
    */
   if (error) {
@@ -163,7 +137,7 @@ export default async function OauthIsAuthenticated(ctx: EcoContext) {
   /**
    * Checks if the data object is not null and contains a user property. If so, sets the payload message
    * to indicate authentication and includes the user data. Calls the next middleware function.
-   * @param {object} data - The data object to check for user property.
+   * @param {object} data - The data object to check for user authentication.
    * @param {function} next - The next middleware function to call.
    * @returns None
    */
@@ -177,9 +151,8 @@ export default async function OauthIsAuthenticated(ctx: EcoContext) {
   }
 
   /**
-   * Sets the status code to 401 and constructs a message payload with authentication details.
-   * @param {object} ctx - The context object containing information about the request and response.
-   * @param {object} payload - The payload object to be sent as a response message.
+   * Sets the status to 401, constructs a message payload with authenticated set to false and user set to null,
+   * and then returns from the function.
    * @returns None
    */
   ctx.status = 401;
@@ -187,10 +160,5 @@ export default async function OauthIsAuthenticated(ctx: EcoContext) {
     authenticated: false,
     user: null,
   };
-
-  /**
-   * Calls the next function in the program flow.
-   * @returns None
-   */
-  next();
+  return;
 }

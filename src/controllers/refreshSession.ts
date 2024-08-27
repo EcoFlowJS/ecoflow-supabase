@@ -1,5 +1,5 @@
 import { EcoContext } from "@ecoflow/types";
-import supabaseClient from "../helpers/supabaseClient";
+import { SupabaseClient } from "@supabase/supabase-js";
 
 /**
  * Asynchronously refreshes the session using the provided EcoContext.
@@ -8,23 +8,21 @@ import supabaseClient from "../helpers/supabaseClient";
  */
 export default async function refreshSession(ctx: EcoContext) {
   /**
-   * Destructures the "_" property from the ecoFlow object.
-   * @param {object} ecoFlow - The ecoFlow object
-   * @returns None
+   * Destructures the _ and moduleConfigs properties from the ecoFlow object.
+   * @returns An object containing the _ and moduleConfigs properties.
    */
-  const { _ } = ecoFlow;
+  const { _, moduleConfigs } = ecoFlow;
 
   /**
-   * Destructures the ctx object into payload, inputs, and next variables.
-   * @param {object} ctx - The context object to destructure
+   * Destructures the context object into payload, inputs, and next variables.
+   * @param {object} ctx - The context object to destructure.
    * @returns None
    */
   const { payload, inputs, next } = ctx;
 
   /**
-   * Checks if the inputs object is empty or undefined, and sets an error message in the payload if so.
+   * Checks if the inputs object is empty or undefined. If so, sets an error message in the payload object.
    * @param {object} inputs - The inputs object to check.
-   * @param {object} payload - The payload object to update with an error message if inputs are missing.
    * @returns None
    */
   if (!inputs || _.isEmpty(inputs)) {
@@ -36,102 +34,44 @@ export default async function refreshSession(ctx: EcoContext) {
   }
 
   /**
-   * Destructures the inputs object to extract projectURL, apiKey, apiKeyFromEnv, refreshToken, and passByPayload.
-   * @param {object} inputs - An object containing projectURL, apiKey, apiKeyFromEnv, refreshToken, and passByPayload.
+   * Destructures the inputs object to extract client, refreshToken, and passByPayload properties.
+   * @param {object} inputs - The inputs object containing client, refreshToken, and passByPayload properties.
    * @returns None
    */
-  const { projectURL, apiKey, apiKeyFromEnv, refreshToken, passByPayload } =
-    inputs;
+  const { client, refreshToken, passByPayload } = inputs;
 
   /**
-   * Checks if the project URL is missing or empty, and sets an error message if it is.
-   * @param {string} projectURL - The project URL to check.
-   * @param {string} apiKey - The API key.
-   * @param {string} apiKeyFromEnv - The API key from environment variables.
-   * @param {string} refreshToken - The refresh token.
-   * @param {string} passByPayload - The pass by payload.
-   * @param {object} payload - The payload object to update with error message if project URL is missing.
+   * Checks if the client object is missing or empty, and sets an error message in the payload if so.
+   * @param {object} client - The client object to check.
    * @returns None
    */
-  if (!projectURL || _.isEmpty(projectURL)) {
+  if (!client || _.isEmpty(client)) {
     payload.msg = {
       error: true,
-      message: "Missing project URL.",
+      message: "Missing client.",
       status: {
-        projectURL: _.isUndefined(projectURL),
-        apiKey: _.isUndefined(apiKey),
-        apiKeyFromEnv: _.isUndefined(apiKeyFromEnv),
-        refreshToken: _.isUndefined(refreshToken),
-        passByPayload: _.isUndefined(passByPayload),
+        client: _.isUndefined(client),
       },
     };
     return;
   }
 
   /**
-   * Retrieves the Supabase API key based on the provided apiKey parameter and environment variables.
-   * @param {string} apiKey - The API key to use, if not undefined.
-   * @returns {string} The Supabase API key to be used.
-   */
-  const supabaseApiKey: string = _.isUndefined(apiKey)
-    ? process.env.ECOFLOW_USER_SUPABASE_API_KEY
-    : apiKeyFromEnv
-    ? process.env[apiKey]
-    : apiKey;
-
-  /**
-   * Checks if the Supabase API key is undefined and sets an error message in the payload object if it is.
-   * @param {any} supabaseApiKey - The Supabase API key to check.
-   * @returns None
-   */
-  if (_.isUndefined(supabaseApiKey)) {
-    payload.msg = {
-      error: true,
-      message: "Missing API Key.",
-      status: {
-        projectURL: _.isUndefined(projectURL),
-        apiKey: _.isUndefined(apiKey),
-        supabaseApiKey: _.isUndefined(supabaseApiKey),
-        apiKeyFromEnv: _.isUndefined(apiKeyFromEnv),
-        refreshToken: _.isUndefined(refreshToken),
-        passByPayload: _.isUndefined(passByPayload),
-      },
-    };
-    return;
-  }
-
-  /**
-   * Retrieves the token based on the value of passByPayload.
-   * If passByPayload is true, the token is retrieved from the payload object.
-   * If passByPayload is false, the token is retrieved directly.
-   * @param {boolean} passByPayload - Determines whether to retrieve the token from the payload object.
+   * Checks if a refresh token is missing or invalid, and updates the payload message accordingly.
+   * @param {boolean} passByPayload - Flag indicating whether the token is passed by payload.
    * @param {string} payload - The payload object containing the token.
-   * @param {string} refreshToken - The refresh token.
-   * @returns The token value based on the passByPayload condition.
+   * @param {string} refreshToken - The refresh token to be checked.
+   * @param {string} client - The client information.
+   * @returns None
    */
   const token = passByPayload ? payload[refreshToken] : refreshToken;
-
-  /**
-   * Checks if the token is undefined or empty, and sets an error message if it is.
-   * @param {any} token - The token to check for validity.
-   * @param {object} payload - The payload object to update with error message.
-   * @param {string} projectURL - The project URL to check for validity.
-   * @param {string} apiKey - The API key to check for validity.
-   * @param {string} supabaseApiKey - The Supabase API key to check for validity.
-   * @param {string} apiKeyFromEnv - The API key from environment to check for validity.
-   * @param {string} refreshToken - The refresh token to check for validity.
-   * @param {string} passByPayload - The payload value to pass by key.
-   * @returns None
-   */
   if (_.isUndefined(token) || _.isEmpty(token)) {
     payload.msg = {
       error: true,
       message: "Missing or invalid refresh token.",
       status: {
-        projectURL: _.isUndefined(projectURL),
-        apiKey: _.isUndefined(apiKey),
-        supabaseApiKey: _.isUndefined(supabaseApiKey),
-        apiKeyFromEnv: _.isUndefined(apiKeyFromEnv),
+        client: _.isUndefined(client),
+        actualToken: token,
         refreshToken: _.isUndefined(refreshToken),
         passByPayload: _.isUndefined(passByPayload),
       },
@@ -140,20 +80,41 @@ export default async function refreshSession(ctx: EcoContext) {
   }
 
   /**
-   * Creates a Supabase client instance with the provided project URL and API key.
-   * @param {string} projectURL - The URL of the Supabase project.
-   * @param {string} supabaseApiKey - The API key for the Supabase project.
-   * @returns A Supabase client instance.
-   */
-  const clientSupabase = supabaseClient(projectURL, supabaseApiKey);
-
-  /**
-   * Checks if the Supabase client is undefined or empty, and sets an error message in the payload if so.
-   * @param {any} clientSupabase - The Supabase client object to check.
-   * @param {object} payload - The payload object to update with an error message if needed.
+   * Selects the configuration manager for the "ecoflow-supabase" package and checks if it exists.
+   * If the configuration manager does not exist, it sets an error message in the payload object.
    * @returns None
    */
-  if (_.isUndefined(clientSupabase) || _.isEmpty(clientSupabase)) {
+  const configManager = moduleConfigs.selectPackage("ecoflow-supabase");
+  if (!configManager || _.isUndefined(configManager)) {
+    payload.msg = {
+      error: true,
+      message: "Missing configs manager for ecoflow-supabase package",
+    };
+    return;
+  }
+
+  /**
+   * Retrieves the configuration for the client using the configManager.
+   * If the configuration is null or empty, it sets an error message in the payload.
+   * @param {Client} client - The client for which the configuration is retrieved.
+   * @returns None
+   */
+  const config = configManager.get(client);
+  if (_.isNull(config) || _.isEmpty(config)) {
+    payload.msg = {
+      error: true,
+      message: "Missing config for ecoflow-supabase package",
+    };
+    return;
+  }
+
+  /**
+   * Checks if the Supabase client is provided in the configuration and handles the case where it is missing.
+   * @param {object} config - The configuration object containing the Supabase client.
+   * @returns None
+   */
+  const supabase = config.configs as SupabaseClient<any, "public", any>;
+  if (_.isNull(supabase) || _.isEmpty(supabase)) {
     payload.msg = {
       error: true,
       message: "Missing supabase client",
@@ -162,17 +123,17 @@ export default async function refreshSession(ctx: EcoContext) {
   }
 
   /**
-   * Refreshes the user session using the provided refresh token.
+   * Refreshes the current user session using the provided refresh token.
    * @param {string} token - The refresh token used to refresh the session.
-   * @returns An object containing the refreshed session data and any error that occurred during the refresh.
+   * @returns An object containing the refreshed session data and any potential errors.
    */
-  const { data, error } = await clientSupabase.auth.refreshSession({
+  const { data, error } = await supabase.auth.refreshSession({
     refresh_token: token,
   });
 
   /**
-   * If an error is present, set the status to 404, construct an error message object
-   * and return.
+   * If an error is present, set the status to 404, construct a message object with the error message and raw error,
+   * and return from the function.
    * @param {Error} error - The error object to handle
    * @returns None
    */
@@ -205,14 +166,12 @@ export default async function refreshSession(ctx: EcoContext) {
   }
 
   /**
-   * Assigns an error message to the payload object.
-   * @param {object} payload - The payload object to which the error message is assigned.
-   * @param {boolean} error - A boolean indicating if the message is an error.
-   * @param {string} message - The error message to be assigned.
+   * Sets an error message in the payload object and returns.
    * @returns None
    */
   payload.msg = {
     error: true,
     message: "Failed to refresh session",
   };
+  return;
 }
