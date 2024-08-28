@@ -82,11 +82,11 @@ export default async function SignInWithPassword(ctx: EcoContext) {
     : payload.msg.captchaToken;
 
   /**
-   * Selects the configuration manager for the "ecoflow-supabase" package and checks if it exists.
+   * Selects the configuration manager for the "ecoflow-supabase-auth" package and checks if it exists.
    * If the configuration manager does not exist, it sets an error message in the payload object.
    * @returns None
    */
-  const configManager = moduleConfigs.selectPackage("ecoflow-supabase");
+  const configManager = moduleConfigs.selectPackage("ecoflow-supabase-auth");
   if (!configManager || _.isUndefined(configManager)) {
     payload.msg = {
       error: true,
@@ -168,7 +168,7 @@ export default async function SignInWithPassword(ctx: EcoContext) {
   payload.msg = {
     success: true,
     message: "Authentication successful",
-    Authenticated: true,
+    Authenticated: data?.session ? true : false,
     user: data?.user,
     session: data?.session,
     userMetadata: data?.user?.user_metadata,

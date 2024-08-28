@@ -39,7 +39,7 @@ export default async function SignInWithOTP(ctx: EcoContext) {
       : payload.msg.email
     : Phone;
 
-  const configManager = moduleConfigs.selectPackage("ecoflow-supabase");
+  const configManager = moduleConfigs.selectPackage("ecoflow-supabase-auth");
   if (!configManager || _.isUndefined(configManager)) {
     payload.msg = {
       error: true,

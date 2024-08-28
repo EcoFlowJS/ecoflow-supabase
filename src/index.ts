@@ -12,7 +12,7 @@ export default function functionManifest(): ModuleManifest {
    * @returns The 'server' property from the ecoFlow object.
    */
   const { server, moduleConfigs } = ecoFlow;
-  const configManager = moduleConfigs.selectPackage("ecoflow-supabase");
+  const configManager = moduleConfigs.selectPackage("ecoflow-supabase-auth");
 
   const selectClientConfig = (): ModuleSpecsInputsTypeOptions[] => {
     if (!configManager) return [];

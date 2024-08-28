@@ -47,12 +47,12 @@ export default async function Signup(ctx: EcoContext) {
     ? payloadKey
       ? payload[payloadKey]?.uData
       : payload.msg.uData
-    : uData || {};
+    : uData || { value: "", validate: false };
   const captchaToken = payloadKey
     ? payload[payloadKey]?.captchaToken
     : payload.msg.captchaToken;
 
-  const configManager = moduleConfigs.selectPackage("ecoflow-supabase");
+  const configManager = moduleConfigs.selectPackage("ecoflow-supabase-auth");
   if (!configManager || _.isUndefined(configManager)) {
     payload.msg = {
       error: true,
@@ -84,7 +84,7 @@ export default async function Signup(ctx: EcoContext) {
     phone: userPhone,
     password: userPassword,
     options: {
-      data: userData,
+      ...(userData.validate ? { data: JSON.parse(userData.value) } : {}),
       ...(captchaToken ? { captchaToken } : {}),
     },
   });
@@ -100,7 +100,17 @@ export default async function Signup(ctx: EcoContext) {
     return;
   }
 
-  payload.msg = data;
+  ctx.status = 200;
+  payload.msg = {
+    success: true,
+    message: "SignUp successful",
+    Authenticated: data?.session ? true : false,
+    user: data?.user,
+    session: data?.session,
+    userMetadata: data?.user?.user_metadata,
+    accessToken: data?.session?.access_token,
+    refreshToken: data?.session?.refresh_token,
+  };
 
   next();
 }

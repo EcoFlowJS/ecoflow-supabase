@@ -78,11 +78,11 @@ export default async function OauthController(ctx: EcoContext) {
   }
 
   /**
-   * Selects the configuration manager for the "ecoflow-supabase" package and checks if it exists.
+   * Selects the configuration manager for the "ecoflow-supabase-auth" package and checks if it exists.
    * If the configuration manager does not exist, an error message is added to the payload.
    * @returns None
    */
-  const configManager = moduleConfigs.selectPackage("ecoflow-supabase");
+  const configManager = moduleConfigs.selectPackage("ecoflow-supabase-auth");
   if (!configManager || _.isUndefined(configManager)) {
     payload.msg = {
       error: true,

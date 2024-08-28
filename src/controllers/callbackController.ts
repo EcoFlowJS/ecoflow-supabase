@@ -51,7 +51,7 @@ export default async function callbackController(ctx: Context) {
     return;
   }
 
-  const configManager = moduleConfigs.selectPackage("ecoflow-supabase");
+  const configManager = moduleConfigs.selectPackage("ecoflow-supabase-auth");
 
   if (!configManager || _.isUndefined(configManager)) {
     ctx.body = {

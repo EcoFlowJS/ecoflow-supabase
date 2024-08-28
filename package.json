@@ -1,5 +1,5 @@
 {
-  "name": "ecoflow-supabase",
+  "name": "ecoflow-supabase-auth",
   "version": "0.0.1",
   "description": "Supabase apis for EcoFlowJS",
   "main": "./dist/index.js",
