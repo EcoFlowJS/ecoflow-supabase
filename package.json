@@ -19,7 +19,10 @@
     "OauthController": "./dist/controllers/OauthController.js",
     "OauthIsAuthenticated": "./dist/controllers/OauthIsAuthenticated.js",
     "refreshSession": "./dist/controllers/refreshSession.js",
-    "ConfigurationController": "./dist/controllers/ConfigurationController.js"
+    "ConfigurationController": "./dist/controllers/ConfigurationController.js",
+    "SignInWithPassword": "./dist/controllers/SignInWithPassword.js",
+    "SignInWithOTP": "./dist/controllers/SignInWithOTP.js",
+    "SignUp": "./dist/controllers/SignUp.js"
   },
   "author": "EcoFlowJS",
   "license": "MIT",

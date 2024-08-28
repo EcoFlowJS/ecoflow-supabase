@@ -60,6 +60,65 @@ export default function functionManifest(): ModuleManifest {
       },
 
       {
+        name: "Signup",
+        type: "Middleware",
+        description: "Supabase Signup",
+        inputs: [
+          {
+            name: "client",
+            label: "Client",
+            type: "SelectPicker",
+            required: true,
+            pickerOptions: selectClientConfig,
+          },
+          {
+            name: "email",
+            type: "String",
+            label: "Email",
+            required: false,
+          },
+          {
+            name: "Phone",
+            type: "String",
+            label: "Phone",
+            required: false,
+          },
+          {
+            name: "password",
+            type: "HiddenString",
+            label: "Password",
+            required: false,
+          },
+
+          {
+            name: "uData",
+            type: "Code",
+            label: "User data",
+            codeLanguage: "json",
+            required: false,
+            defaultValue: "{}",
+          },
+
+          {
+            name: "fromPayload",
+            type: "Checkbox",
+            label: "From payload",
+            hint: "Fetch Email/Phone and password from payload body.",
+            required: false,
+          },
+          {
+            name: "payloadKey",
+            type: "String",
+            label: "Payload key",
+            hint: "Default is 'msg'",
+            defaultValue: "msg",
+            required: false,
+          },
+        ],
+        controller: "SignUp",
+      },
+
+      {
         name: "Oauth SignIn",
         type: "Middleware",
         description: "Supabase OAuth module",
@@ -110,6 +169,107 @@ export default function functionManifest(): ModuleManifest {
           },
         ],
         controller: "OauthController",
+      },
+
+      {
+        name: "SignIn with Password",
+        type: "Middleware",
+        description: "Supabase SignIn with password",
+        inputs: [
+          {
+            name: "client",
+            label: "Client",
+            type: "SelectPicker",
+            required: true,
+            pickerOptions: selectClientConfig,
+          },
+          {
+            name: "email",
+            type: "String",
+            label: "Email",
+            required: false,
+          },
+          {
+            name: "Phone",
+            type: "String",
+            label: "Phone",
+            required: false,
+          },
+          {
+            name: "password",
+            type: "HiddenString",
+            label: "Password",
+            required: false,
+          },
+
+          {
+            name: "fromPayload",
+            type: "Checkbox",
+            label: "From payload",
+            hint: "Fetch Email/Phone and password from payload body.",
+            required: false,
+          },
+          {
+            name: "payloadKey",
+            type: "String",
+            label: "Payload key",
+            hint: "Default is 'msg'",
+            defaultValue: "msg",
+            required: false,
+          },
+        ],
+        controller: "SignInWithPassword",
+      },
+
+      {
+        name: "SignIn with OTP",
+        type: "Middleware",
+        description: "Supabase SignIn with OTP\n Note:Still under development.",
+        inputs: [
+          {
+            name: "client",
+            label: "Client",
+            type: "SelectPicker",
+            required: true,
+            pickerOptions: selectClientConfig,
+          },
+          {
+            name: "email",
+            type: "String",
+            label: "Email",
+            required: false,
+          },
+          {
+            name: "Phone",
+            type: "String",
+            label: "Phone",
+            required: false,
+          },
+
+          {
+            name: "fromPayload",
+            type: "Checkbox",
+            label: "From payload",
+            hint: "Fetch Email/Phone and password from payload body.",
+            required: false,
+          },
+          {
+            name: "payloadKey",
+            type: "String",
+            label: "Payload key",
+            hint: "Default is 'msg'",
+            defaultValue: "msg",
+            required: false,
+          },
+          {
+            name: "callbackURL",
+            type: "String",
+            label: "Callback URL",
+            required: false,
+            hint: `Leave blank if you want to use the default callback URL. Default: ${server.baseUrl} /api /auth /supabase /callback /OTP`,
+          },
+        ],
+        controller: "SignInWithOTP",
       },
 
       {
